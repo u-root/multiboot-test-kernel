@@ -1,0 +1,4 @@
+boot.o
+kernel
+kernel.o
+md5.o
