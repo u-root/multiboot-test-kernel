@@ -16,8 +16,8 @@
  */
 
 #include <sys/io.h>
-#include "md5.h"
 #include "multiboot.h"
+#include "sha256.h"
 /* Macros. */
 
 /* Check if the bit BIT in FLAGS is set. */
@@ -31,15 +31,15 @@ void printf(const char *format, ...);
 
 void print_module(multiboot_uint32_t start, multiboot_uint32_t end,
                   multiboot_uint32_t cmdline) {
-  MD5_CTX ctx;
-  MD5_Init(&ctx);
-  MD5_Update(&ctx, (void *)start, end - start);
-  unsigned char res[16];
-  MD5_Final(res, &ctx);
+  SHA256_CTX ctx;
+  sha256_init(&ctx);
+  sha256_update(&ctx, (void *)start, end - start);
+  unsigned char res[32];
+  sha256_final(&ctx, res);
 
-  printf("{\"start\": %u, \"end\": %u, \"cmdline\": \"%s\", \"md5\": \"",
+  printf("{\"start\": %u, \"end\": %u, \"cmdline\": \"%s\", \"sha256\": \"",
          (unsigned)start, (unsigned)end, (char *)cmdline);
-  for (int i = 0; i < 16; i++) {
+  for (int i = 0; i < 32; i++) {
     printf("%02x", res[i]);
   }
   printf("\"}");
@@ -51,7 +51,7 @@ void cmain(unsigned long magic, unsigned long addr) {
   multiboot_info_t *mbi;
   /* Clear the screen. */
   printf("Starting multiboot kernel\n");
-  
+
   printf("{\n");
   /* Am I booted by a Multiboot-compliant boot loader? */
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
