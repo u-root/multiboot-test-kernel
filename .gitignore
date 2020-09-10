@@ -1,4 +1,6 @@
 boot.o
 kernel
+kernel.gz
 kernel.o
 md5.o
+*.o
