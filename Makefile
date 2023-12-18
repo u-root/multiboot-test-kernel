@@ -9,7 +9,7 @@ all: kernel.gz
 	$(CC) $(CFLAGS) $< -o $@
 
 kernel.gz: kernel
-	gzip kernel
+	gzip -k kernel
 
 kernel: boot.o kernel.o sha256.o
 	$(LD) $(LDFLAGS) $^ -o $@
